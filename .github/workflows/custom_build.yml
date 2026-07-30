@@ -1,0 +1,34 @@
+name: Custom Merge and Build
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Merge
+        run: |
+          git checkout cdc30d8
+          cd loader/src/external/plti
+          git checkout 2dd5582
+          cd ../../../
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add loader/src/external/plti
+          git commit -m "Merge"
+
+      - name: Setup NDK
+        run: echo "NDK_PATH=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
+
+      - name: Build
+        run: make all -j$(nproc)
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReZygisk-Custom-Build
+          path: build/out/*.zip
