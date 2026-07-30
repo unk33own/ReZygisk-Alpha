@@ -13,9 +13,11 @@ jobs:
       - name: Merge
         run: |
           git checkout cdc30d8
+          # الدخول للمجلد الفرعي وتغيير الإصدار
           cd loader/src/external/plti
           git checkout 2dd5582
-          cd ../../../
+          # العودة للمجلد الرئيسي (4 مستويات للخلف)
+          cd ../../../../
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           git add loader/src/external/plti
